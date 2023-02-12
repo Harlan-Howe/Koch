@@ -9,17 +9,17 @@ public class SnowPanel extends JPanel {
 						 //    of recursion should be drawn.
 
 	private BufferedImage myCanvas; // an offscreen image where we'll do thd drawing and occasionally copy to screen.
-	private Object myCanvasMutex;   // a lock to make sure only one thing uses myCanvas at a time.
+	private final Object myCanvasMutex;   // a lock to make sure only one thing uses myCanvas at a time.
 
-	private SnowflakeThread drawingThread; // the portion of code that will do the drawing simultaneously with
+	private final SnowflakeThread drawingThread; // the portion of code that will do the drawing simultaneously with
 	                                       // occasional screen updates.
 	
 	// these two matching arrays of doubles are the x and y components
 	//  of 6 vectors, pointing in the 6 "cardinal" directions.
 	// To make a line that is D units long in the nth direction,
 	// use x = D*i[n] and y = D*j[n].
-	private double[] i = {1.0,  0.5, 	 -0.5,     -1.0, -0.5,     0.5};
-	private double[] j = {0.0, -0.86603, -0.86603,  0.0,  0.86603, 0.86603};
+	private final double[] i = {1.0,  0.5, 	 -0.5,     -1.0, -0.5,     0.5};
+	private final double[] j = {0.0, -0.86603, -0.86603,  0.0,  0.86603, 0.86603};
 	//         roughly...{E,    NE,       NW,       W,    SW,      SE}
 	
 	private double penLocX, penLocY; // where does the next line start?
@@ -42,7 +42,7 @@ public class SnowPanel extends JPanel {
 			myDepth=d;
 			System.out.println("Setting depth to "+d+".");
 //			repaint();
-			drawingThread.interrupt();;
+			drawingThread.interrupt();
 			drawingThread.startDrawing();
 		}
 	}
@@ -139,9 +139,9 @@ public class SnowPanel extends JPanel {
 				double nextYLoc = penLocY + length * j[direction];
 				synchronized (myCanvasMutex) // wait to get access to myCanvas to draw in it, and lock it.
 				{
-					Graphics mCanv_g = myCanvas.getGraphics();
-					mCanv_g.setColor(Color.RED);
-					mCanv_g.drawLine((int) penLocX, (int) penLocY, (int) nextXLoc, (int) nextYLoc);
+					Graphics mCanvas_g = myCanvas.getGraphics();
+					mCanvas_g.setColor(Color.RED);
+					mCanvas_g.drawLine((int) penLocX, (int) penLocY, (int) nextXLoc, (int) nextYLoc);
 				} // done with myCanvas for now.
 
 				setPenLoc(nextXLoc, nextYLoc);

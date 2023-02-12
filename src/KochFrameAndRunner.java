@@ -5,11 +5,11 @@ import javax.swing.event.*;
 
 public class KochFrameAndRunner extends JFrame {
 
-	private SnowPanel myPanel;
-	private JSlider mySlider;
+	private final SnowPanel myPanel;
+	private final JSlider mySlider;
 	
 	/**
-	 * @param args
+	 * @param args - not used.
 	 */
 	public static void main(String[] args) 
 	{
