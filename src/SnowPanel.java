@@ -34,14 +34,18 @@ public class SnowPanel extends JPanel {
 		drawingThread.start();
 		myCanvasMutex = new Object();
 	}
-	
+
+	/**
+	 * Set the overall depth of this image... the maximum number of steps away from the base case. (This is controlled
+	 * by the slider, so the code to manage the slider is what calls this function.)
+	 * @param d - the overall depth of the image.
+	 */
 	public void setDepth(int d)
 	{
 		if (d>-1)
 		{
 			myDepth=d;
 			System.out.println("Setting depth to "+d+".");
-//			repaint();
 			drawingThread.interrupt();
 			drawingThread.startDrawing();
 		}
@@ -55,7 +59,11 @@ public class SnowPanel extends JPanel {
 	
 	public void paintComponent(Graphics g)
 	{
-		//super.paintComponent(g);
+		//super.paintComponent(g); // often used to clear the screen, but we'll just draw over whatever's there.
+
+		// Note: There are two thread both potentially trying to use "myCanvas" at the same time. This can
+		//      cause problems, so we use a "mutex" to ensure that only one accesses it at any given moment.
+
 		synchronized (myCanvasMutex)
 		{
 			if (myCanvas != null)
@@ -93,6 +101,9 @@ public class SnowPanel extends JPanel {
 				if (needsRestart && getHeight() > 5 && getWidth() > 5)
 				{
 					// reset with a new image....
+					// Note: There are two thread both potentially trying to use "myCanvas" at the same time. This can
+					//      cause problems, so we use a "mutex" to ensure that only one accesses it at any given moment.
+
 					synchronized (myCanvasMutex)
 					{
 						myCanvas = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -121,11 +132,13 @@ public class SnowPanel extends JPanel {
 		}
 
 		/**
-		 * This is the method you have to finish!
+		 * This is the method you have to finish! It is the recursive method that draws a line, or replaces the line
+		 * with several others... Note that ONLY the base case draws anything.
 		 *
 		 * @param direction      which of the 6 "cardinal" directions to go
 		 * @param length         how long a line should you draw?
-		 * @param recursionsToGo how many more times do you need to subdivide the line?
+		 * @param recursionsToGo how many more times do you need to subdivide the line? (How far are you from the base
+		 *                       case?)
 		 */
 		public void drawRecursiveLine(int direction,
 									  double length,
@@ -133,10 +146,16 @@ public class SnowPanel extends JPanel {
 		{
 			if (shouldInterrupt)  // bail out if we need to cancel and leave.
 				return;
-			if (1 ==1 )// TODO: base case detection - replace this condition with something better.
+			if (1 == 1 )// TODO: base case detection - replace this condition with something better.
 			{    //------------------------------------------------- BASE CASE START
+				// Done: I've written the drawing code in the base case for you. It draws a line from the current penLoc
+				//       to the next point, a distance "length" in the given 0-5 direction, and updates penLoc so that
+				//       the next line will pick up where the last one ended.
 				double nextXLoc = penLocX + length * i[direction];
 				double nextYLoc = penLocY + length * j[direction];
+				// Note: There are two thread both potentially trying to use "myCanvas" at the same time. This can
+				//      cause problems, so we use a "mutex" to ensure that only one accesses it at any given moment.
+
 				synchronized (myCanvasMutex) // wait to get access to myCanvas to draw in it, and lock it.
 				{
 					Graphics mCanvas_g = myCanvas.getGraphics();
@@ -150,7 +169,8 @@ public class SnowPanel extends JPanel {
 			}
 			else
 			{
-				// TODO: The recursive part....
+				// TODO: The recursive part.... Note that this does not actually draw anything in the non-base case.
+				//       You are trying to replace the given line with calls to draw several smaller ones.
 			}
 
 		}
