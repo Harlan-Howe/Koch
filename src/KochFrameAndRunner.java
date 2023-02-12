@@ -1,10 +1,9 @@
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
 import javax.swing.event.*;
 
 
-public class KochFrame extends JFrame {
+public class KochFrameAndRunner extends JFrame {
 
 	private SnowPanel myPanel;
 	private JSlider mySlider;
@@ -14,10 +13,10 @@ public class KochFrame extends JFrame {
 	 */
 	public static void main(String[] args) 
 	{
-		KochFrame app = new KochFrame();
+		KochFrameAndRunner app = new KochFrameAndRunner();
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	public KochFrame()
+	public KochFrameAndRunner()
 	{
 		super("Koch Snowflake");
 		this.getContentPane().setLayout(new BorderLayout());
